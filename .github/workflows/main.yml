@@ -28,6 +28,6 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: dzver/.
+          context: .
           push: true
           tags: clemenko/dzver:latest
