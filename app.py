@@ -23,7 +23,8 @@ def get_from_github(repo):
         
 def get_from_channels(channel):
     temp_data = json.loads(requests.get("https://update.{}.io/v1-release/channels".format(channel)).text)
-    return json.dumps(temp_data["data"][0]["latest"]).replace('"', '')
+    head, sep, tail = json.dumps(temp_data["data"][0]["latest"]).replace('"', '').partition('+')
+    return head
 
 def get_versions ():
     rke_out = get_from_channels("rke2")
