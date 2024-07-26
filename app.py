@@ -13,7 +13,7 @@ if gh_token:
 else:
     headers = ""
 
-def get_latest_release(repo):
+def get_from_github(repo):
     url = f"https://api.github.com/repos/{repo}/releases/latest"
     with requests.Session() as session:
         response = session.get(url, headers=headers)
@@ -21,19 +21,21 @@ def get_latest_release(repo):
             return response.json().get('tag_name', '')
         return ''
         
+def get_from_channels(channel):
+    temp_data = json.loads(requests.get("https://update.{}.io/v1-release/channels".format(channel)).text)
+    return json.dumps(temp_data["data"][0]["latest"]).replace('"', '')
+
 def get_versions ():
-    rke_data = json.loads(requests.get("https://update.rke2.io/v1-release/channels").text)
-    rke_out = json.dumps(rke_data["data"][0]["latest"]).replace('"', '')
+    rke_out = get_from_channels("rke2")
+    k3s_out = get_from_channels("k3s")
+    rancher_out = get_from_channels("rancher")
+    #rancher_out = get_from_github("rancher/rancher")
 
-    k3s_data = json.loads(requests.get("https://update.k3s.io/v1-release/channels").text)
-    k3s_out = json.dumps(k3s_data["data"][0]["latest"]).replace('"', '')
-
-    cert_out = get_latest_release("cert-manager/cert-manager")
-    rancher_out = get_latest_release("rancher/rancher")
-    longhorn_out = get_latest_release("longhorn/longhorn")
-    neuvector_out = get_latest_release("neuvector/neuvector")
-    harvester_out = get_latest_release("harvester/harvester")
-    hauler_out = get_latest_release("rancherfederal/hauler")
+    cert_out = get_from_github("cert-manager/cert-manager")
+    longhorn_out = get_from_github("longhorn/longhorn")
+    neuvector_out = get_from_github("neuvector/neuvector")
+    harvester_out = get_from_github("harvester/harvester")
+    hauler_out = get_from_github("rancherfederal/hauler")
 
     return rancher_out, rke_out, k3s_out, longhorn_out, neuvector_out, cert_out, harvester_out, hauler_out
 
