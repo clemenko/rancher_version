@@ -1,11 +1,13 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask_caching import Cache
 
 import os
 import requests
 import json
 
-version = "0.1"
+version = "1.0"
 app = Flask(__name__)
+cache = Cache(app, config={'CACHE_TYPE': 'simple'})  # Basic in-memory caching
 
 gh_token = os.getenv('GITHUB2_TOKEN')
 if gh_token:
@@ -42,16 +44,18 @@ def get_versions ():
 
 
 @app.route('/json', methods=['GET'])
+@cache.cached(timeout=1800)  # Cache for 1 hour
 def json_all_the_things():
     rancher_out, rke_out, k3s_out, longhorn_out, neuvector_out, cert_out, harvester_out, hauler_out = get_versions()
 
     return jsonify({'k3s stable': k3s_out, 'rke2 stable': rke_out, 'cert-manager': cert_out, 'rancher': rancher_out, 'longhorn': longhorn_out, 'neuvector': neuvector_out, 'harvester': harvester_out, 'hauler': hauler_out}), 200
 
 @app.route('/', methods=['GET'])
+@cache.cached(timeout=1800)  # Cache for 1 hour
 def curl_all_the_things():
     rancher_out, rke_out, k3s_out, longhorn_out, neuvector_out, cert_out, harvester_out, hauler_out = get_versions()
     
     return render_template('index.html', rancher_ver=rancher_out, rke_ver=rke_out, k3s_ver=k3s_out, longhorn_ver=longhorn_out, neu_ver=neuvector_out, cert_ver=cert_out, harv_ver=harvester_out, hauler_ver=hauler_out)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=False)
+    app.run(host='0.0.0.0',debug=True)
