@@ -58,4 +58,4 @@ def curl_all_the_things():
     return render_template('index.html', rancher_ver=rancher_out, rke_ver=rke_out, k3s_ver=k3s_out, longhorn_ver=longhorn_out, neu_ver=neuvector_out, cert_ver=cert_out, harv_ver=harvester_out, hauler_ver=hauler_out)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',debug=True)
+    app.run(host='0.0.0.0',debug=False)
