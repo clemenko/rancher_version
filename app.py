@@ -23,10 +23,27 @@ def get_from_github(repo):
             return response.json().get('tag_name', '')
         return ''
         
+#def get_from_channels(channel):
+#    temp_data = json.loads(requests.get("https://update.{}.io/v1-release/channels".format(channel)).text)
+#    head, sep, tail = json.dumps(temp_data["data"][0]["latest"]).replace('"', '').partition('+')
+#    return head
+
 def get_from_channels(channel):
-    temp_data = json.loads(requests.get("https://update.{}.io/v1-release/channels".format(channel)).text)
-    head, sep, tail = json.dumps(temp_data["data"][0]["latest"]).replace('"', '').partition('+')
-    return head
+    try:
+        response = requests.get(f"https://update.{channel}.io/v1-release/channels")
+        response.raise_for_status()  # Raise an exception for bad status codes (4xx and 5xx)
+
+        temp_data = json.loads(response.text)
+        head, sep, tail = json.dumps(temp_data["data"][0]["latest"]).replace('"', '').partition('+')
+        return head
+
+    except requests.exceptions.RequestException as e:
+        print(f"An error occurred while making the request: {e}")
+    except json.JSONDecodeError as e:
+        print(f"An error occurred while decoding the JSON response: {e}")
+    except (KeyError, IndexError) as e:
+        print(f"An error occurred while accessing data from the response: {e}")
+    return "upstream server issue"  
 
 def get_versions ():
     rke_out = get_from_channels("rke2")
