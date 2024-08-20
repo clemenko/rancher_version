@@ -1,4 +1,4 @@
-FROM python:alpine3.19
+FROM python:alpine
 #FROM alpine
 #RUN apk -U upgrade && apk add --no-cache py3-pip curl  &&\
 RUN pip3 install --no-cache-dir --upgrade pip --break-system-packages &&\
