@@ -48,8 +48,8 @@ def get_from_channels(channel):
 def get_versions ():
     rke_out = get_from_channels("rke2")
     k3s_out = get_from_channels("k3s")
-    rancher_out = get_from_channels("rancher")
-    #rancher_out = get_from_github("rancher/rancher")
+    #rancher_out = get_from_channels("rancher")
+    rancher_out = get_from_github("rancher/rancher")
 
     cert_out = get_from_github("cert-manager/cert-manager")
     longhorn_out = get_from_github("longhorn/longhorn")
