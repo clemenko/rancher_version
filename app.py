@@ -36,19 +36,6 @@ async def fetch_github_release(client: httpx.AsyncClient, repo: str) -> str:
         app.logger.error(f"GitHub API error for {repo}: {e}")
         return "error fetching release"
 
-async def fetch_channel_version(client: httpx.AsyncClient, channel: str) -> str:
-    """Fetch the latest stable version from the channel API."""
-    url = f"https://update.{channel}.io/v1-release/channels"
-    try:
-        resp = await client.get(url, timeout=10)
-        resp.raise_for_status()
-        data = resp.json()
-        head, _, _ = json.dumps(data["data"][0]["latest"]).replace('"', '').partition('+')
-        return head
-    except (httpx.RequestError, httpx.HTTPStatusError, json.JSONDecodeError, KeyError, IndexError) as e:
-        app.logger.error(f"Channel API error for {channel}: {e}")
-        return "upstream server issue"
-
 # ----------------------------
 # Version Aggregation
 # ----------------------------
